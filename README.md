@@ -32,12 +32,13 @@ Optionally, you can override the base URL with `IPASIS_API_BASE` (defaults to pr
 Example full URL:
 
 ```txt
-https://api.ipasis.com/v1/lookup?ip=8.8.8.8&details=true
+https://api.ipasis.com/v1/lookup?ip=8.8.8.8
 ```
 
 Authentication:
 - Send `X-API-Key: <your_api_key>` or
-- `Authorization: Bearer <your_api_key>`
+- `Authorization: Bearer <your_api_key>` or
+- As a query parameter: `?key=<your_api_key>`
 
 ## 3. Endpoints
 
@@ -47,13 +48,12 @@ Authentication:
 - Path: `/v1/lookup`
 - Query parameters:
   - `ip` (required) — IPv4 or IPv6 address.
-  - `details` (optional, default `false`) — when `true`, include enriched provenance/details.
+  - `key` (optional) — API key, when you prefer query-string auth instead of headers.
 
-Example request (curl):
+Example request:
 
-```bash
-curl -s "https://api.ipasis.com/v1/lookup?ip=8.8.8.8&details=true" \
-  -H "X-API-Key: <your_api_key>"
+```txt
+https://api.ipasis.com/v1/lookup?ip=136.179.39.31&key=ipasis_53f9b76e0066_54ce31f11158cd7bc1b5d12e6b72a3da
 ```
 
 ### 3.2 Response
@@ -64,28 +64,53 @@ On success (`200 OK`), the API returns a JSON document describing the IP. The ex
 - Privacy / risk signals: Tor, VPN, hosting, datacenter, etc.
 - Network and ownership: ASN, organization / company.
 - Abuse / blocklist context.
-- Optional `details` sub-objects when `details=true`.
 
-Example (truncated) response shape:
+Concrete example for the request above:
 
 ```json
 {
-  "ip": "8.8.8.8",
-  "is_tor": false,
-  "is_vpn": false,
+  "ip": "136.179.39.31",
+  "city": "Irvine",
+  "region": "California",
+  "country": "US",
+  "loc": "33.7074,-117.7054",
+  "postal": "92618",
+  "timezone": "America/Los_Angeles",
   "asn": {
-    "number": 15169,
-    "name": "Google LLC"
+    "ASN": "AS23005",
+    "Name": "SWITCH-LTD",
+    "Domain": "",
+    "Route": "",
+    "Type": ""
   },
   "company": {
-    "name": "Google LLC",
-    "domain": "google.com"
+    "Name": "SWITCH-LTD",
+    "Domain": "",
+    "Type": ""
+  },
+  "privacy": {
+    "VPN": false,
+    "Proxy": false,
+    "Tor": false,
+    "Relay": false,
+    "Hosting": false,
+    "Abuse": false,
+    "AI": false,
+    "Crawler": false,
+    "Service": ""
   },
   "abuse": {
-    "score": 5
+    "Address": "",
+    "Country": "",
+    "Email": "",
+    "Name": "",
+    "Network": "",
+    "Phone": ""
   },
-  "details": {
-    "sources": [/* provenance data, when enabled */]
+  "domains": {
+    "Page": 0,
+    "Total": 0,
+    "Domains": null
   }
 }
 ```

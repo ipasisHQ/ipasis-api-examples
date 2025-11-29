@@ -10,15 +10,10 @@ const base = (process.env.IPASIS_API_BASE || "https://api.ipasis.com").replace(/
 const ip = process.argv[2] || "8.8.8.8";
 
 async function main() {
-  const url = `${base}/v1/lookup?ip=${encodeURIComponent(ip)}&details=true`;
+  const url = `${base}/v1/lookup?ip=${encodeURIComponent(ip)}&key=${encodeURIComponent(apiKey)}`;
 
   try {
-    const res = await fetch(url, {
-      method: "GET",
-      headers: {
-        "X-API-Key": apiKey,
-      },
-    });
+    const res = await fetch(url, { method: "GET" });
 
     console.log(`HTTP ${res.status}`);
     const text = await res.text();
@@ -40,4 +35,3 @@ async function main() {
 }
 
 main();
-

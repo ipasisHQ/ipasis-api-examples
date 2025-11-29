@@ -11,13 +11,13 @@ if [[ -z "${API_KEY}" ]]; then
   exit 1
 fi
 
-URL="${BASE}/v1/lookup?ip=${IP}&details=true"
+URL="${BASE}/v1/lookup?ip=${IP}&key=${API_KEY}"
 
 echo "GET ${URL}"
 echo
 
 set +e
-HTTP_RESPONSE=$(curl -sS -w "HTTP_STATUS:%{http_code}" -H "X-API-Key: ${API_KEY}" "${URL}")
+HTTP_RESPONSE=$(curl -sS -w "HTTP_STATUS:%{http_code}" "${URL}")
 STATUS="${HTTP_RESPONSE##*HTTP_STATUS:}"
 BODY="${HTTP_RESPONSE%HTTP_STATUS:*}"
 set -e
@@ -28,4 +28,3 @@ echo "${BODY}"
 if [[ "${STATUS}" -lt 200 || "${STATUS}" -ge 300 ]]; then
   exit 1
 fi
-
